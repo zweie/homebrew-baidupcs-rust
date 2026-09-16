@@ -1,0 +1,25 @@
+name: Test formula
+
+on:
+  pull_request:
+    paths:
+      - "Formula/**"
+  push:
+    branches: [main]
+    paths:
+      - "Formula/**"
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tap this repo
+        run: brew tap ${{ github.repository_owner }}/baidupcs "$GITHUB_WORKSPACE"
+
+      - name: Audit
+        run: brew audit --strict ${{ github.repository_owner }}/baidupcs/baidupcs-rust
+
+      - name: Install
+        run: brew install --verbose ${{ github.repository_owner }}/baidupcs/baidupcs-rust
