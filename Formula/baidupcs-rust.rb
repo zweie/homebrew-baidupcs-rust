@@ -1,6 +1,8 @@
 class BaidupcsRust < Formula
   desc "百度网盘第三方客户端（Rust + Vue3）"
   homepage "https://github.com/komorebiCarry/BaiduPCS-Rust"
+  url "https://github.com/komorebiCarry/BaiduPCS-Rust/releases/download/v2.3.2/BaiduPCS-Rust-v2.3.2-macos-arm64.zip"
+  sha256 "9673e11525ccb06bd189c0db6cf98a703917edeaa300a19151763cba560bc619"
   license "Apache-2.0"
 
   livecheck do
@@ -8,21 +10,23 @@ class BaidupcsRust < Formula
     strategy :github_latest
   end
 
-  if Hardware::CPU.arm?
-    url "https://github.com/komorebiCarry/BaiduPCS-Rust/releases/download/v2.2.3/BaiduPCS-Rust-v2.2.3-macos-arm64.zip"
-    sha256 "478e1916147f8609cc5341f4e8e0de24324cee2150404f21deeef9a961225b7f"
-  else
-    url "https://github.com/komorebiCarry/BaiduPCS-Rust/releases/download/v2.2.3/BaiduPCS-Rust-v2.2.3-macos-x86_64.zip "
-    sha256 "f74f8e4f7bbf4552073e172a05e5ce4c8cc4c3509f69fa95ce8bee40b3c3292a"
-  end
-
   def install
     libexec.install Dir["*"]
 
-    %w[data wal logs downloads].each do |d|
+    %w[config data wal logs downloads].each do |d|
       target = var/"baidupcs-rust"/d
       target.mkpath
-      rm_r libexec/d if (libexec/d).exist?
+
+      # 只在 var 那边还是空的时候,把发行包自带的默认内容(比如默认 app.toml)
+      # 种一份过去打底;var 里已经有真实数据时,不会用新版本的默认内容覆盖它
+      if (libexec/d).exist? && !(libexec/d).symlink?
+        (libexec/d).children.each do |f|
+          dest = target/f.basename
+          cp_r(f, dest) unless dest.exist?
+        end
+        rm_r libexec/d
+      end
+
       ln_sf target, libexec/d
     end
 
@@ -40,6 +44,9 @@ class BaidupcsRust < Formula
     keep_alive true
     log_path var/"log/baidupcs-rust.log"
     error_log_path var/"log/baidupcs-rust.log"
+    environment_variables HTTP_PROXY: "", HTTPS_PROXY: "", ALL_PROXY: "",
+                           http_proxy: "", https_proxy: "", all_proxy: "",
+                           NO_PROXY: "*"
   end
 
   test do
