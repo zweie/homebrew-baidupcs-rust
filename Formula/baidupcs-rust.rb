@@ -1,8 +1,8 @@
 class BaidupcsRust < Formula
   desc "百度网盘第三方客户端（Rust + Vue3）"
   homepage "https://github.com/komorebiCarry/BaiduPCS-Rust"
-  url "https://github.com/komorebiCarry/BaiduPCS-Rust/releases/download/v2.3.2/BaiduPCS-Rust-v2.3.2-macos-arm64.zip"
-  sha256 "9673e11525ccb06bd189c0db6cf98a703917edeaa300a19151763cba560bc619"
+  url "https://github.com/komorebiCarry/BaiduPCS-Rust/releases/download/v2.4.0/BaiduPCS-Rust-v2.4.0-macos-arm64.zip"
+  sha256 "9cbc729dcd9ab09562ff39813e2e0f377ffc69925fb669bae6faf93786d719a8"
   license "Apache-2.0"
 
   livecheck do
